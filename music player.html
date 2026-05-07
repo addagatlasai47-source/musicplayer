@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Working Music Player</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#000;
+    color:white;
+    overflow:hidden;
+}
+
+/* LOGIN */
+
+.login-page{
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+    linear-gradient(rgba(0,0,0,0.8),
+    rgba(0,0,0,0.8)),
+    url("https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f");
+    background-size:cover;
+}
+
+.login-box{
+    width:380px;
+    background:#111;
+    padding:40px;
+    border-radius:25px;
+    text-align:center;
+}
+
+.login-box h1{
+    color:#1db954;
+    margin-bottom:30px;
+}
+
+.input-box{
+    background:#222;
+    padding:14px;
+    border-radius:14px;
+    margin-bottom:20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.input-box input{
+    width:100%;
+    background:none;
+    border:none;
+    outline:none;
+    color:white;
+}
+
+.login-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:#1db954;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* APP */
+
+.app{
+    display:none;
+}
+
+/* HEADER */
+
+.header{
+    height:80px;
+    background:#111;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 25px;
+}
+
+.logo{
+    color:#1db954;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.search-box{
+    width:320px;
+    background:#222;
+    border-radius:40px;
+    padding:12px 18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.search-box input{
+    width:100%;
+    border:none;
+    outline:none;
+    background:none;
+    color:white;
+}
+
+/* MAIN */
+
+.main{
+    height:calc(100vh - 200px);
+    overflow-y:auto;
+    padding:25px;
+}
+
+/* MOVIES */
+
+.movie-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+}
+
+.movie-card{
+    background:#181818;
+    padding:15px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.movie-card:hover{
+    background:#252525;
+}
+
+.movie-card img{
+    width:100%;
+    height:280px;
+    border-radius:18px;
+    object-fit:cover;
+}
+
+.movie-card h3{
+    margin-top:15px;
+}
+
+/* SONGS */
+
+.song-page{
+    display:none;
+}
+
+.back-btn{
+    background:#1db954;
+    border:none;
+    padding:12px 18px;
+    border-radius:12px;
+    margin-bottom:20px;
+    cursor:pointer;
+}
+
+.song-list{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.song-item{
+    background:#181818;
+    padding:15px;
+    border-radius:18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.song-left{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.song-left img{
+    width:70px;
+    height:70px;
+    border-radius:14px;
+    object-fit:cover;
+}
+
+.play-btn{
+    background:#1db954;
+    border:none;
+    padding:12px 18px;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+/* PLAYER */
+
+.player{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:120px;
+    background:#111;
+    border-top:1px solid #222;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 20px;
+}
+
+.song-info{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    width:300px;
+}
+
+.song-info img{
+    width:70px;
+    height:70px;
+    border-radius:14px;
+    object-fit:cover;
+}
+
+.controls{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.control-buttons{
+    display:flex;
+    gap:25px;
+    margin-bottom:12px;
+}
+
+.control-buttons button{
+    border:none;
+    background:none;
+    color:white;
+    font-size:24px;
+    cursor:pointer;
+}
+
+/* TIMELINE */
+
+.music-timeline{
+    width:100%;
+    max-width:700px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.progress-container{
+    position:relative;
+    flex:1;
+    height:8px;
+    cursor:pointer;
+}
+
+.progress-bg{
+    width:100%;
+    height:8px;
+    background:#333;
+    border-radius:20px;
+    position:absolute;
+}
+
+.progress-bar{
+    width:0%;
+    height:8px;
+    background:#1db954;
+    border-radius:20px;
+    position:absolute;
+}
+
+.progress-circle{
+    position:absolute;
+    top:50%;
+    left:0%;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:white;
+    transform:translate(-50%,-50%);
+}
+
+/* SOUND MODES */
+
+.sound-modes{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+.sound-modes button{
+    border:none;
+    background:#222;
+    color:white;
+    padding:10px 14px;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.sound-modes button.active{
+    background:#1db954;
+    color:black;
+}
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+
+<div class="login-page" id="loginPage">
+
+    <div class="login-box">
+
+        <h1>
+            Music Login
+        </h1>
+
+        <div class="input-box">
+
+            <i class="fa-solid fa-user"></i>
+
+            <input type="text"
+            id="username"
+            placeholder="Username">
+
+        </div>
+
+        <div class="input-box">
+
+            <i class="fa-solid fa-lock"></i>
+
+            <input type="password"
+            id="password"
+            placeholder="Password">
+
+        </div>
+
+        <button class="login-btn"
+        onclick="loginUser()">
+
+            Login
+
+        </button>
+
+        <p style="margin-top:20px;color:#aaa;">
+            Username: admin <br>
+            Password: 1234
+        </p>
+
+    </div>
+
+</div>
+
+<!-- APP -->
+
+<div class="app" id="app">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="logo">
+            Music Player
+        </div>
+
+        <div class="search-box">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input type="text"
+            id="searchInput"
+            placeholder="Search Movies"
+            onkeyup="searchMovies()">
+
+        </div>
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="main">
+
+        <!-- MOVIES -->
+
+        <div id="moviePage">
+
+            <h1 style="margin-bottom:25px;">
+                Movie Albums
+            </h1>
+
+            <div class="movie-grid"
+            id="movieGrid"></div>
+
+        </div>
+
+        <!-- SONG PAGE -->
+
+        <div class="song-page"
+        id="songPage">
+
+            <button class="back-btn"
+            onclick="goBack()">
+
+                ← Back
+
+            </button>
+
+            <h1 id="movieTitle"
+            style="margin-bottom:25px;"></h1>
+
+            <div class="song-list"
+            id="songList"></div>
+
+        </div>
+
+    </div>
+
+    <!-- PLAYER -->
+
+    <div class="player">
+
+        <div class="song-info">
+
+            <img id="cover"
+            src="https://picsum.photos/300/300?1">
+
+            <div>
+
+                <h4 id="title">
+                    Select Song
+                </h4>
+
+                <p id="artist"
+                style="color:#aaa;">
+                    Artist
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="controls">
+
+            <div class="control-buttons">
+
+                <button onclick="prevSong()">
+                    <i class="fa-solid fa-backward"></i>
+                </button>
+
+                <button onclick="togglePlay()">
+
+                    <i class="fa-solid fa-circle-play"
+                    id="playIcon"></i>
+
+                </button>
+
+                <button onclick="nextSong()">
+                    <i class="fa-solid fa-forward"></i>
+                </button>
+
+            </div>
+
+            <!-- TIMELINE -->
+
+            <div class="music-timeline">
+
+                <span id="currentTime">
+                    0:00
+                </span>
+
+                <div class="progress-container"
+                id="progressContainer">
+
+                    <div class="progress-bg"></div>
+
+                    <div class="progress-bar"
+                    id="progressBar"></div>
+
+                    <div class="progress-circle"
+                    id="progressCircle"></div>
+
+                </div>
+
+                <span id="duration">
+                    0:00
+                </span>
+
+            </div>
+
+            <!-- SOUND MODES -->
+
+            <div class="sound-modes">
+
+                <button class="active"
+                onclick="setSoundMode('normal',this)">
+                    Normal
+                </button>
+
+                <button onclick="setSoundMode('bass',this)">
+                    Bass
+                </button>
+
+                <button onclick="setSoundMode('dolby',this)">
+                    Dolby
+                </button>
+
+                <button onclick="setSoundMode('surround',this)">
+                    Surround
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- AUDIO -->
+
+<audio id="audio"></audio>
+
+<script>
+
+/* LOGIN */
+
+function loginUser(){
+
+    let username =
+    document.getElementById("username").value;
+
+    let password =
+    document.getElementById("password").value;
+
+    if(username === "admin" &&
+       password === "1234"){
+
+        document.getElementById("loginPage")
+        .style.display = "none";
+
+        document.getElementById("app")
+        .style.display = "block";
+
+    }else{
+
+        alert("Wrong Username or Password");
+    }
+}
+
+/* MOVIES */
+
+const movies = [
+
+{
+    name:"Love Hits",
+
+    image:"https://picsum.photos/400/500?1",
+
+    songs:[
+
+        {
+            title:"Dream Song",
+            artist:"Singer One",
+            image:"https://picsum.photos/300/300?11",
+            src:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        },
+
+        {
+            title:"Night Love",
+            artist:"Singer Two",
+            image:"https://picsum.photos/300/300?12",
+            src:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+        }
+
+    ]
+},
+
+{
+    name:"Action Beats",
+
+    image:"https://picsum.photos/400/500?2",
+
+    songs:[
+
+        {
+            title:"Action Hero",
+            artist:"Singer Three",
+            image:"https://picsum.photos/300/300?13",
+            src:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+        },
+
+        {
+            title:"Fast Motion",
+            artist:"Singer Four",
+            image:"https://picsum.photos/300/300?14",
+            src:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+        }
+
+    ]
+}
+
+];
+
+/* VARIABLES */
+
+let currentSong = 0;
+let currentSongs = [];
+
+const movieGrid =
+document.getElementById("movieGrid");
+
+const songPage =
+document.getElementById("songPage");
+
+const moviePage =
+document.getElementById("moviePage");
+
+const songList =
+document.getElementById("songList");
+
+const movieTitle =
+document.getElementById("movieTitle");
+
+const audio =
+document.getElementById("audio");
+
+const cover =
+document.getElementById("cover");
+
+const title =
+document.getElementById("title");
+
+const artist =
+document.getElementById("artist");
+
+const playIcon =
+document.getElementById("playIcon");
+
+const progressBar =
+document.getElementById("progressBar");
+
+const progressCircle =
+document.getElementById("progressCircle");
+
+const progressContainer =
+document.getElementById("progressContainer");
+
+/* DISPLAY MOVIES */
+
+function displayMovies(movieArray){
+
+    movieGrid.innerHTML = "";
+
+    movieArray.forEach((movie,index)=>{
+
+        movieGrid.innerHTML += `
+
+        <div class="movie-card"
+        onclick="openMovie(${index})">
+
+            <img src="${movie.image}">
+
+            <h3>${movie.name}</h3>
+
+        </div>
+
+        `;
+    });
+}
+
+displayMovies(movies);
+
+/* OPEN MOVIE */
+
+function openMovie(index){
+
+    currentSongs =
+    movies[index].songs;
+
+    moviePage.style.display = "none";
+
+    songPage.style.display = "block";
+
+    movieTitle.innerText =
+    movies[index].name;
+
+    displaySongs(currentSongs);
+}
+
+/* BACK */
+
+function goBack(){
+
+    songPage.style.display = "none";
+
+    moviePage.style.display = "block";
+}
+
+/* SONGS */
+
+function displaySongs(songArray){
+
+    songList.innerHTML = "";
+
+    songArray.forEach((song,index)=>{
+
+        songList.innerHTML += `
+
+        <div class="song-item">
+
+            <div class="song-left">
+
+                <img src="${song.image}">
+
+                <div>
+
+                    <h3>${song.title}</h3>
+
+                    <p style="color:#aaa;">
+                        ${song.artist}
+                    </p>
+
+                </div>
+
+            </div>
+
+            <button class="play-btn"
+            onclick="loadSong(${index})">
+
+                ▶ Play
+
+            </button>
+
+        </div>
+
+        `;
+    });
+}
+
+/* LOAD SONG */
+
+function loadSong(index){
+
+    currentSong = index;
+
+    let song =
+    currentSongs[index];
+
+    audio.src = song.src;
+
+    cover.src = song.image;
+
+    title.innerText = song.title;
+
+    artist.innerText = song.artist;
+
+    audio.play();
+
+    playIcon.classList.remove("fa-circle-play");
+
+    playIcon.classList.add("fa-circle-pause");
+}
+
+/* PLAY / PAUSE */
+
+function togglePlay(){
+
+    if(audio.src === "") return;
+
+    if(audio.paused){
+
+        audio.play();
+
+        playIcon.classList.remove("fa-circle-play");
+
+        playIcon.classList.add("fa-circle-pause");
+
+    }else{
+
+        audio.pause();
+
+        playIcon.classList.remove("fa-circle-pause");
+
+        playIcon.classList.add("fa-circle-play");
+    }
+}
+
+/* NEXT */
+
+function nextSong(){
+
+    currentSong++;
+
+    if(currentSong >= currentSongs.length){
+
+        currentSong = 0;
+    }
+
+    loadSong(currentSong);
+}
+
+/* PREVIOUS */
+
+function prevSong(){
+
+    currentSong--;
+
+    if(currentSong < 0){
+
+        currentSong =
+        currentSongs.length - 1;
+    }
+
+    loadSong(currentSong);
+}
+
+/* TIMELINE */
+
+audio.addEventListener("timeupdate",()=>{
+
+    if(audio.duration){
+
+        let percent =
+        (audio.currentTime /
+        audio.duration) * 100;
+
+        progressBar.style.width =
+        percent + "%";
+
+        progressCircle.style.left =
+        percent + "%";
+
+        let currentMin =
+        Math.floor(audio.currentTime / 60);
+
+        let currentSec =
+        Math.floor(audio.currentTime % 60);
+
+        if(currentSec < 10){
+            currentSec = "0" + currentSec;
+        }
+
+        document.getElementById("currentTime")
+        .innerText =
+        currentMin + ":" + currentSec;
+
+        let durationMin =
+        Math.floor(audio.duration / 60);
+
+        let durationSec =
+        Math.floor(audio.duration % 60);
+
+        if(durationSec < 10){
+            durationSec = "0" + durationSec;
+        }
+
+        document.getElementById("duration")
+        .innerText =
+        durationMin + ":" + durationSec;
+    }
+});
+
+/* SEEK */
+
+progressContainer.addEventListener("click",(e)=>{
+
+    let width =
+    progressContainer.clientWidth;
+
+    let clickX =
+    e.offsetX;
+
+    audio.currentTime =
+    (clickX / width) * audio.duration;
+});
+
+/* SEARCH */
+
+function searchMovies(){
+
+    let value =
+    document.getElementById("searchInput")
+    .value.toLowerCase();
+
+    let filteredMovies =
+    movies.filter(movie =>
+
+        movie.name.toLowerCase()
+        .includes(value)
+
+    );
+
+    displayMovies(filteredMovies);
+}
+
+/* SOUND MODES */
+
+function setSoundMode(mode,button){
+
+    document.querySelectorAll(".sound-modes button")
+    .forEach(btn=>{
+
+        btn.classList.remove("active");
+
+    });
+
+    button.classList.add("active");
+
+    if(mode === "normal"){
+
+        audio.volume = 1;
+        audio.playbackRate = 1;
+    }
+
+    if(mode === "bass"){
+
+        audio.volume = 1;
+        audio.playbackRate = 0.95;
+    }
+
+    if(mode === "dolby"){
+
+        audio.volume = 1;
+        audio.playbackRate = 1.05;
+    }
+
+    if(mode === "surround"){
+
+        audio.volume = 1;
+        audio.playbackRate = 1;
+    }
+}
+
+/* AUTO NEXT */
+
+audio.addEventListener("ended",nextSong);
+
+</script>
+
+</body>
+</html>
